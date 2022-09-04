@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:metadata_cleaner/screens/MetadataEditorScreen.dart';
-import 'package:metadata_cleaner/widgets/RecentImageGallery.dart';
+import 'package:metadata_cleaner/screens/metadata_editor_screen.dart';
+import 'package:metadata_cleaner/widgets/recent_image_gallery.dart';
 
 class ImagePickerScreen extends StatelessWidget {
   const ImagePickerScreen({super.key});

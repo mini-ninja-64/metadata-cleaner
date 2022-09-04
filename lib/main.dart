@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:metadata_cleaner/screens/ImagePickerScreen.dart';
+import 'package:metadata_cleaner/screens/image_picker_screen.dart';
 
 void main() {
   runApp(const App());
