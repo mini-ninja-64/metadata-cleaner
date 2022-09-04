@@ -13,7 +13,6 @@ class ImagePickerScreen extends StatelessWidget {
             title: const Text("Infinite Image Gallery")),
         body: RecentImageGallery(
           onImageSelect: (file) async {
-            // TODO: set Current Screen
             Navigator.push(
                 context,
                 MaterialPageRoute(
