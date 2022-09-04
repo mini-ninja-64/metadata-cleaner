@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:metadata_cleaner/widgets/metadata_viewer.dart';
+import 'package:metadata_cleaner/widgets/metadata_list.dart';
 import 'package:metadata_processor/metadata_processor.dart';
 
 class MockMetadata extends FileMetadata {
