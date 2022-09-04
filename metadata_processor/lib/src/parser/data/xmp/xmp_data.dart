@@ -1,20 +1,26 @@
 import 'package:xml/xml.dart';
 
+class XmpField {
+  final String name;
+  final String content;
+
+  const XmpField(this.name, this.content);
+}
+
 class XmpData {
   final XmlDocument _xmlDocument;
 
-  XmpData(String xmlDoc) : _xmlDocument = XmlDocument.parse(xmlDoc);
+  XmpData(String xmpDocument) : _xmlDocument = XmlDocument.parse(xmpDocument);
 
   void deleteField(int index) {
     final nodeToDelete = xmlElements[index];
     nodeToDelete.parentElement?.children.remove(nodeToDelete);
   }
 
-// TODO: this not good, as maps do not guarantee order but we are deleting based on the index
-  Map<String, String> get fields {
-    return {
-      for (var element in xmlElements) element.qualifiedName: element.innerText,
-    };
+  List<XmpField> get fields {
+    return [
+      for (var element in xmlElements) XmpField(element.qualifiedName, element.innerText),
+    ];
   }
 
   List<XmlElement> get xmlElements {
