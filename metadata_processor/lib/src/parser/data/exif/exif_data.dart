@@ -147,7 +147,7 @@ Tag parseTag(Endian endianness, int tagPos, ExifDataCallback exifDataCallback) {
     case 34665:
     case 34853:
     case 40965:
-      print("nested ifd found");
+      print("nested ifd found id: ${tagId.toRadixString(16)}");
       final nestedIfdOffset = sumBytes(Endian.big, normalizedData);
       final subIfds = parseIfds(endianness, nestedIfdOffset, exifDataCallback);
       return SubIfdTag(tagId, tagType, itemCount, normalizedData, subIfds);

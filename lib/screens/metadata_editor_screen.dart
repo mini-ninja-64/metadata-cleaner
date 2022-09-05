@@ -39,8 +39,9 @@ class MockMetadata extends FileMetadata {
 
 class MetadataEditorScreen extends StatelessWidget {
   final File file;
-  final MockMetadata metadata = MockMetadata();
-  MetadataEditorScreen({super.key, required this.file});
+  final FileMetadata metadata;
+  MetadataEditorScreen({super.key, required this.file})
+      : metadata = JpegMetadata(JpegFile.fromFile(file));
 
   @override
   Widget build(BuildContext context) {
@@ -51,7 +52,7 @@ class MetadataEditorScreen extends StatelessWidget {
       body: Column(
         children: [
           Container(
-            padding: const EdgeInsets.all(10),
+              padding: const EdgeInsets.all(10),
               child: Center(
                   child: FractionallySizedBox(
                       widthFactor: 0.5,

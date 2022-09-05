@@ -8,3 +8,4 @@ export '/src/parser/data/exif/exif_data.dart';
 
 export 'src/metadata/metadata.dart';
 export 'src/metadata/png_metadata.dart';
+export 'src/metadata/jpeg_metadata.dart';

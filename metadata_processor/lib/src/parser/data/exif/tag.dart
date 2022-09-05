@@ -54,10 +54,13 @@ abstract class Tag {
 
   Tag(this.id, this.type, this.count, this.tagData);
 
+  String get name {
+    return exifTagLookup[id] ?? "Unknown Tag";
+  }
+
   @override
   String toString() {
-    final tagName = exifTagLookup[id] ?? "Unknown Tag";
-    return "[${runtimeType.toString()}] '$tagName' ($id): $dataAsString";
+    return "[${runtimeType.toString()}] '$name' ($id): $dataAsString";
   }
 
   String get dataAsString {

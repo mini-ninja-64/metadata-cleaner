@@ -10,7 +10,7 @@ class ImagePickerScreen extends StatelessWidget {
     return Scaffold(
         appBar: AppBar(
             leading: const Icon(Icons.camera),
-            title: const Text("Infinite Image Gallery")),
+            title: const Text("Select an image")),
         body: RecentImageGallery(
           onImageSelect: (file) async {
             Navigator.push(

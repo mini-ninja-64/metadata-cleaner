@@ -3,6 +3,11 @@ abstract class MetadataTag {
   String get content;
 
   const MetadataTag();
+
+  @override
+  String toString() {
+    return '$name: $content';
+  }
 }
 
 class ImmutableMetadataTag extends MetadataTag {
