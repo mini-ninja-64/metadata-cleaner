@@ -10,8 +10,10 @@ class JpegMetadata extends FileMetadata {
 
   JpegMetadata(this.file);
 
-  Iterable<MapEntry<Tag, ImageFileDirectory>> getTagsFromIfd(ImageFileDirectory ifd) {
-    List<MapEntry<Tag, ImageFileDirectory>> allTags = List.empty(growable: true);
+  Iterable<MapEntry<Tag, ImageFileDirectory>> getTagsFromIfd(
+      ImageFileDirectory ifd) {
+    List<MapEntry<Tag, ImageFileDirectory>> allTags =
+        List.empty(growable: true);
     for (final tag in ifd.interoptabilityArray) {
       if (tag is SubIfdTag) {
         final tags = tag.imageFileDirectories.expand(getTagsFromIfd);

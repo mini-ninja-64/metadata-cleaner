@@ -56,7 +56,7 @@ class _RecentImageGallery extends State<RecentImageGallery> {
           );
 
           // TODO: infinite loading, should optimize into slices first
-          if (index >= assetsWithThumbnails.length-(pageSize~/2)) {
+          if (index >= assetsWithThumbnails.length - (pageSize ~/ 2)) {
             _loadMoreRecentImages();
           }
 
@@ -67,21 +67,20 @@ class _RecentImageGallery extends State<RecentImageGallery> {
             clipBehavior: Clip.antiAlias,
             child: Material(
                 child: Ink.image(
-                  image: MemoryImage(currentAsset.thumbnailData),
-                  fit: BoxFit.cover,
-                  child: InkWell(
-                    onTap: () async {
-                      // TODO: set state to disallow selection
+              image: MemoryImage(currentAsset.thumbnailData),
+              fit: BoxFit.cover,
+              child: InkWell(
+                onTap: () async {
+                  // TODO: set state to disallow selection
 
-                      var assetFile = await currentAsset.assetEntity.file;
-                      if (assetFile == null) {
-                        throw const FileSystemException(
-                            "File could not be loaded");
-                      }
-                      widget.onImageSelect?.call(assetFile);
-                    },
-                  ),
-                )),
+                  var assetFile = await currentAsset.assetEntity.file;
+                  if (assetFile == null) {
+                    throw const FileSystemException("File could not be loaded");
+                  }
+                  widget.onImageSelect?.call(assetFile);
+                },
+              ),
+            )),
           );
         });
   }

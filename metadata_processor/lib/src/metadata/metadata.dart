@@ -1,5 +1,13 @@
 import 'dart:typed_data';
 
+class ImmutableMetadataTag extends MetadataTag {
+  @override
+  final String name;
+  @override
+  final String content;
+  const ImmutableMetadataTag(this.name, this.content);
+}
+
 abstract class MetadataTag {
   String get name;
   String get content;
@@ -11,15 +19,6 @@ abstract class MetadataTag {
     return '$name: $content';
   }
 }
-
-class ImmutableMetadataTag extends MetadataTag {
-  @override
-  final String name;
-  @override
-  final String content;
-  const ImmutableMetadataTag(this.name, this.content);
-}
-
 
 abstract class FileMetadata {
   List<MetadataTag> get allTags;

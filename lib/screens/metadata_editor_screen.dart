@@ -15,6 +15,13 @@ FileMetadata metadataFromFile(File file) {
       "This file type is currently unsupported: ${file.path}");
 }
 
+String insertFileNamePostfix(String path, String postfix) {
+  final splitFilePath = path.split(".");
+  splitFilePath.insert(splitFilePath.length - 1, postfix);
+
+  return splitFilePath.join(".");
+}
+
 class MetadataEditorScreen extends StatelessWidget {
   final File file;
   final FileMetadata metadata;
@@ -26,17 +33,19 @@ class MetadataEditorScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
           leading: const Icon(Icons.edit_note_rounded),
-          actions:  [Container(margin: const EdgeInsets.fromLTRB(0, 0, 20, 0),child: IconButton(onPressed: () {
-            final splitFilePath = file.path.split(".");
-            splitFilePath.insert(splitFilePath.length - 1, "cleaned");
-
-            final newFile = File(splitFilePath.join("."));
-            final newFileBytes = metadata.fileBytes;
-
-            newFile.writeAsBytes(newFileBytes);
-          } , icon: const Icon(Icons.save_as_rounded)),)],
+          actions: [
+            Container(
+              margin: const EdgeInsets.fromLTRB(0, 0, 20, 0),
+              child: IconButton(
+                  onPressed: () {
+                    final newFile =
+                        File(insertFileNamePostfix(file.path, "cleaned"));
+                    newFile.writeAsBytes(metadata.fileBytes);
+                  },
+                  icon: const Icon(Icons.save_as_rounded)),
+            )
+          ],
           title: const Text("Edit image metadata")),
-
       body: Column(
         children: [
           Container(

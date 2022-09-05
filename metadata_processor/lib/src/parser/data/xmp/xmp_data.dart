@@ -19,7 +19,8 @@ class XmpData {
 
   List<XmpField> get fields {
     return [
-      for (var element in xmlElements) XmpField(element.qualifiedName, element.innerText),
+      for (var element in xmlElements)
+        XmpField(element.qualifiedName, element.innerText),
     ];
   }
 

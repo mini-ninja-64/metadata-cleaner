@@ -3,9 +3,8 @@ import 'package:metadata_processor/metadata_processor.dart';
 
 class MetadataList extends StatefulWidget {
   final FileMetadata metadata;
-  final Image? image;
 
-  const MetadataList({super.key, required this.metadata, this.image});
+  const MetadataList({super.key, required this.metadata});
 
   @override
   State<MetadataList> createState() => _MetadataListState();
