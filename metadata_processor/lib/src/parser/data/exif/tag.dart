@@ -51,16 +51,18 @@ abstract class Tag {
   final TagType type;
   final int count;
   final Uint8List tagData;
+  final int? _ifdId;
 
-  Tag(this.id, this.type, this.count, this.tagData);
+  Tag(this.id, this.type, this.count, this.tagData, [this._ifdId]);
 
   String get name {
-    return exifTagLookup[id] ?? "Unknown Tag";
+    if (_ifdId == null) return "Unknown Tag";
+    return exifTagLookup[_ifdId]?[id] ?? "Unknown Tag";
   }
 
   @override
   String toString() {
-    return "[${runtimeType.toString()}] '$name' ($id): $dataAsString";
+    return "[${runtimeType.toString()}] $id: $dataAsString";
   }
 
   String get dataAsString {
@@ -103,11 +105,11 @@ mixin SignedIntMixin on Tag {
 }
 
 class ByteTag extends Tag with UnsignedIntMixin {
-  ByteTag(super.id, super.type, super.count, super.tagData);
+  ByteTag(super.id, super.type, super.count, super.tagData, [super.ifdId]);
 }
 
 class AsciiTag extends Tag {
-  AsciiTag(super.id, super.type, super.count, super.tagData);
+  AsciiTag(super.id, super.type, super.count, super.tagData, [super.ifdId]);
 
   @override
   String get dataAsString {
@@ -116,15 +118,15 @@ class AsciiTag extends Tag {
 }
 
 class ShortTag extends Tag with UnsignedIntMixin {
-  ShortTag(super.id, super.type, super.count, super.tagData);
+  ShortTag(super.id, super.type, super.count, super.tagData, [super.ifdId]);
 }
 
 class LongTag extends Tag with UnsignedIntMixin {
-  LongTag(super.id, super.type, super.count, super.tagData);
+  LongTag(super.id, super.type, super.count, super.tagData, [super.ifdId]);
 }
 
 class RationalTag extends Tag {
-  RationalTag(super.id, super.type, super.count, super.tagData);
+  RationalTag(super.id, super.type, super.count, super.tagData, [super.ifdId]);
 
   List<Rational> get asValues {
     return chunkList(tagData, type.size.total).map((bytes) {
@@ -144,15 +146,17 @@ class RationalTag extends Tag {
 }
 
 class UndefinedTag extends Tag {
-  UndefinedTag(super.id, super.type, super.count, super.tagData);
+  UndefinedTag(super.id, super.type, super.count, super.tagData, [super.ifdId]);
 }
 
 class SignedLongTag extends Tag with SignedIntMixin {
-  SignedLongTag(super.id, super.type, super.count, super.tagData);
+  SignedLongTag(super.id, super.type, super.count, super.tagData,
+      [super.ifdId]);
 }
 
 class SignedRationalTag extends Tag {
-  SignedRationalTag(super.id, super.type, super.count, super.tagData);
+  SignedRationalTag(super.id, super.type, super.count, super.tagData,
+      [super.ifdId]);
 
   List<Rational> get asValues {
     return chunkList(tagData, type.size.total).map((bytes) {
@@ -176,13 +180,14 @@ class SignedRationalTag extends Tag {
 // an example of an OffsetTag would be a sub ifd tag where data size is 4 bytes
 // but they actually point to an IFD.
 class OffsetTag extends Tag {
-  OffsetTag(super.id, super.type, super.count, super.tagData);
+  OffsetTag(super.id, super.type, super.count, super.tagData, [super.ifdId]);
 }
 
 class SubIfdTag extends OffsetTag {
   final List<ImageFileDirectory> imageFileDirectories;
   SubIfdTag(super.id, super.type, super.count, super.tagData,
-      this.imageFileDirectories);
+      this.imageFileDirectories,
+      [super.ifdId]);
 
   @override
   String get dataAsString {
@@ -195,11 +200,57 @@ class SubIfdTag extends OffsetTag {
 class ThumbnailTag extends OffsetTag {
   final Uint8List thumbnailData;
   ThumbnailTag(
-      super.id, super.type, super.count, super.tagData, this.thumbnailData);
+      super.id, super.type, super.count, super.tagData, this.thumbnailData,
+      [super.ifdId]);
 }
 
-// TODO: does not account for current IFD, WHICH DOES AFFECT THE TAG NAME
-const exifTagLookup = {
+const Map<int, Map<int, String>> exifTagLookup = {
+  0: commonIfdTags,
+  1: commonIfdTags,
+  0xA005: {
+    0x0001: "InteropIndex",
+    0x0002: "InteropVersion",
+    0x1000: "RelatedImageFileFormat",
+    0x1001: "RelatedImageWidth",
+    0x1002: "RelatedImageHeight"
+  },
+  0x8825: {
+    0x0000: "GPS Version ID",
+    0x0001: "GPSLatitudeRef",
+    0x0002: "GPSLatitudeRef",
+    0x0003: "GPSLongitudeRef",
+    0x0004: "GPSLongitude",
+    0x0005: "GPSAltitudeRef",
+    0x0006: "GPSAltitude",
+    0x0007: "GPSTimeStamp",
+    0x0008: "GPSSatellites",
+    0x0009: "GPSStatus",
+    0x000a: "GPSMeasureMode",
+    0x000b: "GPSDOP",
+    0x000c: "GPSSpeedRef",
+    0x000d: "GPSSpeed",
+    0x000e: "GPSTrackRef",
+    0x000f: "GPSTrack",
+    0x0010: "GPSImgDirectionRef",
+    0x0011: "GPSImgDirection",
+    0x0012: "GPSMapDatum",
+    0x0013: "GPSDestLatitudeRef",
+    0x0014: "GPSDestLatitude",
+    0x0015: "GPSDestLongitudeRef",
+    0x0016: "GPSDestLongitude",
+    0x0017: "GPSDestBearingRef",
+    0x0018: "GPSDestBearing",
+    0x0019: "GPSDestDistanceRef",
+    0x001a: "GPSDestDistance",
+    0x001b: "GPSProcessingMethod",
+    0x001c: "GPSAreaInformation",
+    0x001d: "GPSDateStamp",
+    0x001e: "GPSDifferential",
+    0x001f: "GPSHPositioningError",
+  },
+  0x8769: commonIfdTags,
+};
+const commonIfdTags = {
   0x0001: "InteropIndex",
   0x0002: "InteropVersion",
   0x000b: "ProcessingSoftware",

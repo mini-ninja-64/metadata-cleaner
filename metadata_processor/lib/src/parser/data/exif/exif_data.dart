@@ -114,7 +114,7 @@ class ExifData {
 typedef ExifDataCallback = Uint8List Function(
     int offsetFromTiffHeader, int size);
 
-Tag parseTag(Endian endianness, int tagPos, ExifDataCallback exifDataCallback) {
+Tag parseTag(Endian endianness, int tagPos, ExifDataCallback exifDataCallback, int currentIfd) {
   final tagData = exifDataCallback(tagPos, 12);
   var bytePos = 0;
   final tagId = valueFromBytes(endianness, tagData, bytePos, 2);
@@ -144,37 +144,37 @@ Tag parseTag(Endian endianness, int tagPos, ExifDataCallback exifDataCallback) {
       : reverseBytes(rawData);
 
   switch (tagId) {
-    case 34665:
-    case 34853:
-    case 40965:
+    case 0x8769:
+    case 0x8825:
+    case 0xA005:
       print("nested ifd found id: ${tagId.toRadixString(16)}");
       final nestedIfdOffset = sumBytes(Endian.big, normalizedData);
-      final subIfds = parseIfds(endianness, nestedIfdOffset, exifDataCallback);
-      return SubIfdTag(tagId, tagType, itemCount, normalizedData, subIfds);
+      final subIfds = parseIfds(endianness, nestedIfdOffset, exifDataCallback, tagId);
+      return SubIfdTag(tagId, tagType, itemCount, normalizedData, subIfds, currentIfd);
   }
 
   switch (tagType) {
     case TagType.byte:
-      return ByteTag(tagId, tagType, itemCount, normalizedData);
+      return ByteTag(tagId, tagType, itemCount, normalizedData,currentIfd);
     case TagType.ascii:
-      return AsciiTag(tagId, tagType, itemCount, normalizedData);
+      return AsciiTag(tagId, tagType, itemCount, normalizedData,currentIfd);
     case TagType.short:
-      return ShortTag(tagId, tagType, itemCount, normalizedData);
+      return ShortTag(tagId, tagType, itemCount, normalizedData,currentIfd);
     case TagType.long:
-      return LongTag(tagId, tagType, itemCount, normalizedData);
+      return LongTag(tagId, tagType, itemCount, normalizedData,currentIfd);
     case TagType.rational:
-      return RationalTag(tagId, tagType, itemCount, normalizedData);
+      return RationalTag(tagId, tagType, itemCount, normalizedData,currentIfd);
     case TagType.undefined:
-      return UndefinedTag(tagId, tagType, itemCount, normalizedData);
+      return UndefinedTag(tagId, tagType, itemCount, normalizedData,currentIfd);
     case TagType.signedLong:
-      return SignedLongTag(tagId, tagType, itemCount, normalizedData);
+      return SignedLongTag(tagId, tagType, itemCount, normalizedData,currentIfd);
     case TagType.signedRational:
-      return SignedRationalTag(tagId, tagType, itemCount, normalizedData);
+      return SignedRationalTag(tagId, tagType, itemCount, normalizedData,currentIfd);
   }
 }
 
 List<ImageFileDirectory> parseIfds(
-    Endian endianness, int firstIfdPos, ExifDataCallback exifDataCallback) {
+    Endian endianness, int firstIfdPos, ExifDataCallback exifDataCallback, [int? ifdId]) {
   List<ImageFileDirectory> ifdList = [];
 
   var ifdPointer = firstIfdPos;
@@ -182,12 +182,14 @@ List<ImageFileDirectory> parseIfds(
     // ############################### IFD BLOCK PARSING ###############################
     var bytePos = ifdPointer;
 
+    ifdId ??= ifdList.length;
+
     final arraySize = sumBytes(endianness, exifDataCallback(bytePos, 2));
     bytePos += 2;
 
     List<Tag> tags = [];
     for (var i = 0; i < arraySize; i++) {
-      final tag = parseTag(endianness, bytePos, exifDataCallback);
+      final tag = parseTag(endianness, bytePos, exifDataCallback, ifdId);
 
       tags.add(tag);
 
@@ -220,7 +222,7 @@ List<ImageFileDirectory> parseIfds(
       Uint8List thumbnailData =
           exifDataCallback(thumbnailPointer, thumbnailSize);
       tags[thumbnailTagIndex] =
-          ThumbnailTag(tag.id, tag.type, tag.count, tag.tagData, thumbnailData);
+          ThumbnailTag(tag.id, tag.type, tag.count, tag.tagData, thumbnailData,ifdId);
     }
 
     ifdPointer = sumBytes(endianness, exifDataCallback(bytePos, 4));

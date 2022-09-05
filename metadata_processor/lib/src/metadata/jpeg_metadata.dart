@@ -27,10 +27,12 @@ class JpegMetadata extends FileMetadata {
       .map((segment) => segment.asExifData);
 
   @override
-  List<MetadataTag> get allTags => exifData
+  List<MetadataTag> get allTags{
+    return exifData
       .expand((exif) => exif.imageFileDirectories.expand(getTagsFromIfd))
       .map((tag) => ImmutableMetadataTag(tag.name, tag.dataAsString))
       .toList();
+}
 
   @override
   void deleteTag(int tagToDelete) {}
