@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:metadata_processor/metadata_processor.dart';
 import 'package:metadata_processor/src/parser/file/png/text_chunk.dart';
 
@@ -37,4 +39,7 @@ class PngMetadata extends FileMetadata {
       }
     }
   }
+
+  @override
+  Uint8List get fileBytes => file.bytes;
 }

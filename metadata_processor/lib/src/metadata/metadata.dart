@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 abstract class MetadataTag {
   String get name;
   String get content;
@@ -21,6 +23,7 @@ class ImmutableMetadataTag extends MetadataTag {
 
 abstract class FileMetadata {
   List<MetadataTag> get allTags;
+  Uint8List get fileBytes;
 
   void deleteTag(int tagToDelete);
 

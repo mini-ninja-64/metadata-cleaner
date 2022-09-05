@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:metadata_processor/metadata_processor.dart';
 import 'package:metadata_processor/src/parser/data/exif/ifd.dart';
 import 'package:metadata_processor/src/parser/data/exif/tag.dart';
@@ -50,6 +52,9 @@ class JpegMetadata extends FileMetadata {
     tagToDeleteData.ifd.interoptabilityArray.remove(tagToDeleteData.tag);
     tagToDeleteData.segment.data = tagToDeleteData.exifData.asExifBytes;
   }
+
+  @override
+  Uint8List get fileBytes => file.asBytes;
 }
 
 class _UpdatableTag {
